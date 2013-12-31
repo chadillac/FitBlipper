@@ -12,6 +12,9 @@ def main():
         print("usage: fitblipper.py string_to_process")
     else:
         strang = sys.argv[1]
+        tld = "com"
+        if "." in sys.argv[1]:
+            strang, tld = sys.argv[1].split(".")
         results = {}
         bits = bitarray.bitarray()
         bits.fromstring(strang)
@@ -57,7 +60,7 @@ def main():
         #print(bits.to01())
         #print(results.items())
         for key, item in results.items():
-            print(item+".com")
+            print("%s.%s"  % (item, tld))
 
 if __name__ == '__main__':
     main()
