@@ -56,6 +56,55 @@ microskft.com
 mycrosoft.com
 ```
 
+**example usage for alternate TLDs:**
+```
+$ ./fitblipper.py microsoft.net
+microsmft.net
+misrosoft.net
+micrmsoft.net
+iicrosoft.net
+mkcrosoft.net
+mikrosoft.net
+microsobt.net
+micsosoft.net
+mibrosoft.net
+miczosoft.net
+migrosoft.net
+microsofd.net
+microsont.net
+micrnsoft.net
+mic2osoft.net
+microsofv.net
+microsoft.net
+microsofu.net
+microsodt.net
+microsofp.net
+microsgft.net
+micrksoft.net
+mhcrosoft.net
+mycrosoft.net
+licrosoft.net
+micbosoft.net
+mmcrosoft.net
+microwoft.net
+microroft.net
+macrosoft.net
+eicrosoft.net
+oicrosoft.net
+microsovt.net
+miarosoft.net
+micrgsoft.net
+microsnft.net
+microsogt.net
+micro3oft.net
+micvosoft.net
+microqoft.net
+microsof4.net
+micposoft.net
+microcoft.net
+microskft.net
+```
+
 **example usage for finding which domains to buy:**
 ```
 $ ./fitblipper.py microsoft | xargs -n1 whois | grep -i 'no match' | grep -oEi "([A-Z0-9\-]){1,}.COM"
