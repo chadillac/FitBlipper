@@ -99,5 +99,13 @@ def main():
                 except:
                     print("%s.%s"  % (item, tld))
 
+        print("Following domain(s) are avaliable")
+        for key, item in results.items():
+            #Check if a whois record exists for this domain
+            try: 
+                domain = whois.whois("%s.%s"  % (item, tld))
+            except:
+                print("%s.%s"  % (item, tld))
+
 if __name__ == '__main__':
     main()
