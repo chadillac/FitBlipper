@@ -1,7 +1,7 @@
 FitBlipper
 ==========
 
-A simple python script used to generate bit flipped versions of domain names.
+FitBlipper is a tool designed to help generate and check for the availability of bitflipped domain names.
 
 (requires https://pypi.python.org/pypi/bitarray/)
 
@@ -24,7 +24,7 @@ optional arguments:
 
 **finding which domains to buy:**
 ```
-$ ./fitblipper.py -ad microsoft.com 
+$ ./fitblipper.py -ad microsoft
 +====================+
 | AVAILABLE DOMAINS: |
 +====================+
