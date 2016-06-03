@@ -7,118 +7,132 @@ A simple python script used to generate bit flipped versions of domain names.
 
 (inspired by this (AWESOME) Defcon 21 presentation (https://www.youtube.com/watch?v=ZPbyDSvGasw || http://rot26.net/stucke.pdf || https://www.defcon.org/html/defcon-21/dc-21-speakers.html#Stucke)
 
-**example usage:**
+**additional options**
 ```
-$ ./fitblipper.py microsoft
-macrosoft.com
-micposoft.com
-mmcrosoft.com
-microwoft.com
-micrmsoft.com
-micro3oft.com
+usage: fitblipper.py [-h] [-a] -d DOMAIN
+
+FitBlipper is a tool designed to help generate and check for the availability
+of bitflipped domain names.
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -a          list only domains that are currently available for purchase
+  -d DOMAIN   the domain name to generate bitflip variants of
+
+```
+
+
+**finding which domains to buy:**
+```
+$ ./fitblipper.py -ad microsoft.com 
++====================+
+| AVAILABLE DOMAINS: |
++====================+
 micrgsoft.com
-micrksoft.com
-microcoft.com
-microsont.com
+microsmft.com
+```
+
+**finding all possible domains:**
+```
+$ ./fitblipper.py -d microsoft
++=======================+
+| ALL POSSIBLE DOMAINS: |
++=======================+
 micsosoft.com
+micrgsoft.com
+microsofd.com
+microsofu.com
+micrksoft.com
 micvosoft.com
-mic2osoft.com
+microcoft.com
+microroft.com
+mycrosoft.com
+microsnft.com
+miczosoft.com
+mikrosoft.com
+microsofv.com
+micposoft.com
+miarosoft.com
 oicrosoft.com
+microwoft.com
 microsof4.com
 microsogt.com
-micrnsoft.com
-micbosoft.com
 microsgft.com
-microroft.com
-misrosoft.com
-iicrosoft.com
-mikrosoft.com
-miczosoft.com
-miarosoft.com
-microsmft.com
-mibrosoft.com
-eicrosoft.com
-microqoft.com
-microsovt.com
-mkcrosoft.com
-microsobt.com
-microsofp.com
-microsnft.com
-microsofv.com
-microsoft.com
-microsofu.com
-migrosoft.com
-licrosoft.com
 microsodt.com
-microsofd.com
-mhcrosoft.com
+micrmsoft.com
+mkcrosoft.com
+microsoft.com
+microsofp.com
+macrosoft.com
+microsont.com
 microskft.com
-mycrosoft.com
+eicrosoft.com
+licrosoft.com
+microsobt.com
+mhcrosoft.com
+micbosoft.com
+misrosoft.com
+migrosoft.com
+microsovt.com
+micrnsoft.com
+mic2osoft.com
+iicrosoft.com
+micro3oft.com
+microsmft.com
+mmcrosoft.com
+microqoft.com
+mibrosoft.com
 ```
 
-**example usage for alternate TLDs:**
+**using alternate TLDs:**
 ```
-$ ./fitblipper.py microsoft.net
-microsmft.net
-misrosoft.net
-micrmsoft.net
+$ ./fitblipper.py -d microsoft.net
++=======================+
+| ALL POSSIBLE DOMAINS: |
++=======================+
 iicrosoft.net
-mkcrosoft.net
-mikrosoft.net
-microsobt.net
-micsosoft.net
-mibrosoft.net
-miczosoft.net
+microsmft.net
 migrosoft.net
-microsofd.net
-microsont.net
-micrnsoft.net
-mic2osoft.net
-microsofv.net
-microsoft.net
-microsofu.net
-microsodt.net
-microsofp.net
-microsgft.net
-micrksoft.net
-mhcrosoft.net
-mycrosoft.net
-licrosoft.net
-micbosoft.net
-mmcrosoft.net
-microwoft.net
-microroft.net
-macrosoft.net
-eicrosoft.net
-oicrosoft.net
-microsovt.net
-miarosoft.net
-micrgsoft.net
-microsnft.net
-microsogt.net
-micro3oft.net
-micvosoft.net
 microqoft.net
 microsof4.net
-micposoft.net
+micro3oft.net
+microroft.net
+microsgft.net
+macrosoft.net
+microsofp.net
+mikrosoft.net
+mibrosoft.net
+micrksoft.net
+microsofd.net
+micrnsoft.net
+miczosoft.net
+misrosoft.net
+microsogt.net
+microsobt.net
+mhcrosoft.net
 microcoft.net
+eicrosoft.net
+microsovt.net
+micposoft.net
+micrmsoft.net
+microsofu.net
+licrosoft.net
+microsofv.net
+miarosoft.net
+microsoft.net
+micbosoft.net
+microwoft.net
+mkcrosoft.net
+micsosoft.net
 microskft.net
+microsnft.net
+mic2osoft.net
+mycrosoft.net
+mmcrosoft.net
+micvosoft.net
+microsodt.net
+micrgsoft.net
+oicrosoft.net
+microsont.net
 ```
 
-**example usage for finding which domains to buy:**
-```
-$ ./fitblipper.py microsoft | xargs -n1 whois | grep -i 'no match' | grep -oEi "([A-Z0-9\-]){1,}.COM"
-MIC2OSOFT.COM
-OICROSOFT.COM
-MICROSNFT.COM
-MICROSONT.COM
-MICROSOFV.COM
-MICROSGFT.COM
-MICRNSOFT.COM
-MHCROSOFT.COM
-MICROSOF4.COM
-MICRO3OFT.COM
-MICPOSOFT.COM
-MICVOSOFT.COM
-MICZOSOFT.COM
-```

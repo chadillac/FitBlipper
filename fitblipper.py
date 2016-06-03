@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 ## The MIT License (MIT)
 ## 
 ## Copyright (c) 2014 Chad Seaman
@@ -22,34 +24,40 @@
 ## OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ## SOFTWARE.
 
-#!/usr/bin/python
 
 import sys
 import re
+import os
 import bitarray
-import whois
 import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-l', help='list of all the FitBlipper possible with the domain', action="store_true")
-parser.add_argument('-a', help='list of all the available domains from the FitBlipper possibilities', action="store_true")
-args, domain = parser.parse_known_args()
+parser = argparse.ArgumentParser(description='FitBlipper is a tool designed to help generate and check for the availability of bitflipped domain names.')
+parser.add_argument('-a', help='list only domains that are currently available for purchase', action="store_true")
+parser.add_argument('-d', help='the domain name to generate bitflip variants of', dest="domain", required=True)
+args = parser.parse_known_args()[0]
+
+def domain_available(domain):
+    ret = os.system("whois "+domain+" | grep -i 'no match' &>/dev/null")
+    if ret == 0:
+        return True
+    else:
+        return False
 
 def main():
     if len(sys.argv) <= 1:
-        print('You need to give me a string... or run --help for info')
+        parser.print_help()
     else:
-        strang = sys.argv[1]
+        domain_in = args.domain
         tld = "com"
-        if "." in sys.argv[1]:
-            strang, tld = sys.argv[1].split(".")
+        if "." in domain_in :
+            domain_in, tld = domain_in.split(".")
         results = {}
         bits = bitarray.bitarray()
-        bits.fromstring(strang)
+        bits.fromstring(domain_in)
         bits_str = bits.to01()
         domain_valid = re.compile("^[a-z0-9\-]{1,}$")
         # chop into bytes
-        for char in range(0,strang.__len__()):
+        for char in range(0,len(domain_in)):
             start_off = char*8
             end_off = start_off+8
             char_bin = bits_str[start_off:end_off]
@@ -87,17 +95,24 @@ def main():
                     results[flipped_result_ascii] = flipped_result_ascii
         #print(bits.to01())
         #print(results.items())
-        if args.l:
-            for key, item in results.items():
-                print("%s.%s"  % (item, tld))
-
         if args.a:
+            sys.stderr.write("+====================+\n")
+            sys.stderr.write("| AVAILABLE DOMAINS: |\n")
+            sys.stderr.write("+====================+\n")
             for key, item in results.items():
                 #Check if a whois record exists for this domain
-                try: 
-                    domain = whois.whois("%s.%s"  % (item, tld))
-                except:
-                    print("%s.%s"  % (item, tld))
+                if domain_available(item+"."+tld):
+                    print("%s.%s" % (item, tld))
+                ##try: 
+                ##    domain = whois.whois("%s.%s" % (item, tld))
+                ##except:
+                ##    print("%s.%s" % (item, tld))
+        else:
+            sys.stderr.write("+=======================+\n")
+            sys.stderr.write("| ALL POSSIBLE DOMAINS: |\n")
+            sys.stderr.write("+=======================+\n")
+            for key, item in results.items():
+                print("%s.%s" % (item, tld))
 
 if __name__ == '__main__':
     main()
