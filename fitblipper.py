@@ -27,13 +27,17 @@
 import sys
 import re
 import bitarray
+import whois
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-l', help='list of all the FitBlipper possible with the domain', action="store_true")
+parser.add_argument('-a', help='list of all the available domains from the FitBlipper possibilities', action="store_true")
+args, domain = parser.parse_known_args()
 
 def main():
     if len(sys.argv) <= 1:
         print('You need to give me a string... or run --help for info')
-    elif sys.argv[1] == '--help':
-        print("FitBlipper is a utility to flip single bits in domain a string to see what combinations are possible.\n")
-        print("usage: fitblipper.py string_to_process")
     else:
         strang = sys.argv[1]
         tld = "com"
@@ -83,8 +87,17 @@ def main():
                     results[flipped_result_ascii] = flipped_result_ascii
         #print(bits.to01())
         #print(results.items())
-        for key, item in results.items():
-            print("%s.%s"  % (item, tld))
+        if args.l:
+            for key, item in results.items():
+                print("%s.%s"  % (item, tld))
+
+        if args.a:
+            for key, item in results.items():
+                #Check if a whois record exists for this domain
+                try: 
+                    domain = whois.whois("%s.%s"  % (item, tld))
+                except:
+                    print("%s.%s"  % (item, tld))
 
 if __name__ == '__main__':
     main()
