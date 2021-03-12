@@ -1,138 +1,144 @@
 FitBlipper
 ==========
 
-FitBlipper is a tool designed to help generate and check for the availability of bitflipped domain names.
-
-(requires https://pypi.python.org/pypi/bitarray/)
+FitBlipper is a tool designed to help generate and check for the availability of bitflipped domain names and (g)TLDs.
 
 (inspired by this (AWESOME) Defcon 21 presentation (https://www.youtube.com/watch?v=ZPbyDSvGasw || http://rot26.net/stucke.pdf || https://www.defcon.org/html/defcon-21/dc-21-speakers.html#Stucke)
 
 **additional options**
 ```
-usage: fitblipper.py [-h] [-a] -d DOMAIN
+$ ./fitblipper.py --help
+usage: fitblipper.py [-h] [-s] [-a] [-f] -d DOMAIN
 
-FitBlipper is a tool designed to help generate and check for the availability
-of bitflipped domain names.
+FitBlipper is a tool designed to help generate and check for the availability of bitflipped domain names.
 
 optional arguments:
   -h, --help  show this help message and exit
+  -s          list domains registered status
   -a          list only domains that are currently available for purchase
+  -f          look for bitflipped (g)TLDs as well
   -d DOMAIN   the domain name to generate bitflip variants of
-
 ```
 
+**tlds.txt**
+This file contains the (g)TLDs that will also be tested for bit flipped variants.  It serves as a type of verification of valid (g)TLDs, if for example you do not wish to see `.bom` variants, you can remove `.bom` from the list.
 
 **finding which domains to buy:**
 ```
-$ ./fitblipper.py -ad microsoft
+$ ./fitblipper.py -fad microsoft.com
 +====================+
 | AVAILABLE DOMAINS: |
 +====================+
-micrgsoft.com
-microsmft.com
++ testing 90 combinations... this may take a while...
+microqoft.bom is available
+microwoft.bom is available
+eicrosoft.bom is available
+microsgft.bom is available
+micrnsoft.bom is available
+micrgsoft.bom is available
+microsodt.bom is available
+miczosoft.bom is available
+mkcrosoft.bom is available
+mmcrosoft.bom is available
+microsofv.bom is available
+...
 ```
 
 **finding all possible domains:**
 ```
-$ ./fitblipper.py -d microsoft
+$ ./fitblipper.py -fd microsoft.com
 +=======================+
 | ALL POSSIBLE DOMAINS: |
 +=======================+
-micsosoft.com
-micrgsoft.com
-microsofd.com
-microsofu.com
-micrksoft.com
-micvosoft.com
-microcoft.com
-microroft.com
-mycrosoft.com
-microsnft.com
-miczosoft.com
-mikrosoft.com
-microsofv.com
-micposoft.com
-miarosoft.com
-oicrosoft.com
-microwoft.com
-microsof4.com
-microsogt.com
-microsgft.com
-microsodt.com
-micrmsoft.com
-mkcrosoft.com
-microsoft.com
-microsofp.com
-macrosoft.com
-microsont.com
-microskft.com
-eicrosoft.com
-licrosoft.com
 microsobt.com
-mhcrosoft.com
-micbosoft.com
-misrosoft.com
+micrmsoft.bom
+macrosoft.com
+micro3oft.bom
+microcoft.com
+mmcrosoft.bom
+mibrosoft.bom
+microqoft.bom
+miarosoft.bom
+micbosoft.bom
+microroft.bom
 migrosoft.com
-microsovt.com
+microsofu.bom
+microsofp.com
+micvosoft.bom
+microsnft.com
 micrnsoft.com
-mic2osoft.com
-iicrosoft.com
-micro3oft.com
-microsmft.com
-mmcrosoft.com
+miczosoft.com
+licrosoft.bom
+microsofd.bom
+microsmft.bom
+mkcrosoft.com
 microqoft.com
+micposoft.bom
+micrgsoft.com
+mikrosoft.bom
+microskft.com
+oicrosoft.com
+eicrosoft.bom
+microsont.com
+eicrosoft.com
+microsoft.com
+microsogt.bom
+microsodt.bom
+microsofp.bom
+microsofd.com
+microsodt.com
+mic2osoft.bom
+microcoft.bom
+microsovt.bom
+iicrosoft.com
+macrosoft.bom
+microsgft.com
+microwoft.com
+microsmft.com
+misrosoft.com
 mibrosoft.com
-```
-
-**using alternate TLDs:**
-```
-$ ./fitblipper.py -d microsoft.net
-+=======================+
-| ALL POSSIBLE DOMAINS: |
-+=======================+
-iicrosoft.net
-microsmft.net
-migrosoft.net
-microqoft.net
-microsof4.net
-micro3oft.net
-microroft.net
-microsgft.net
-macrosoft.net
-microsofp.net
-mikrosoft.net
-mibrosoft.net
-micrksoft.net
-microsofd.net
-micrnsoft.net
-miczosoft.net
-misrosoft.net
-microsogt.net
-microsobt.net
-mhcrosoft.net
-microcoft.net
-eicrosoft.net
-microsovt.net
-micposoft.net
-micrmsoft.net
-microsofu.net
-licrosoft.net
-microsofv.net
-miarosoft.net
-microsoft.net
-micbosoft.net
-microwoft.net
-mkcrosoft.net
-micsosoft.net
-microskft.net
-microsnft.net
-mic2osoft.net
-mycrosoft.net
-mmcrosoft.net
-micvosoft.net
-microsodt.net
-micrgsoft.net
-oicrosoft.net
-microsont.net
+microroft.com
+micsosoft.com
+miczosoft.bom
+mhcrosoft.com
+misrosoft.bom
+microskft.bom
+micrmsoft.com
+microsnft.bom
+microsgft.bom
+micrgsoft.bom
+oicrosoft.bom
+micrksoft.bom
+mycrosoft.bom
+microwoft.bom
+-icrosoft.com
+mhcrosoft.bom
+mmcrosoft.com
+iicrosoft.bom
+microsogt.com
+microsoft.bom
+-icrosoft.bom
+micsosoft.bom
+micposoft.com
+microsobt.bom
+migrosoft.bom
+mycrosoft.com
+microsofu.com
+micbosoft.com
+microsof4.com
+miarosoft.com
+microsofv.bom
+microsovt.com
+microsont.bom
+micro3oft.com
+micrnsoft.bom
+micvosoft.com
+microsof4.bom
+microsofv.com
+licrosoft.com
+micrksoft.com
+mikrosoft.com
+mic2osoft.com
+mkcrosoft.bom
 ```
 

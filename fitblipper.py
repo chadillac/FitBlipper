@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ## The MIT License (MIT)
 ## 
-## Copyright (c) 2014 Chad Seaman
+## Copyright (c) 2021 Chad Seaman
 ## 
 ## http://github.com/chadillac/FitBlipper
 ## 
@@ -28,20 +28,83 @@
 import sys
 import re
 import os
-import bitarray
 import argparse
+import subprocess
 
 parser = argparse.ArgumentParser(description='FitBlipper is a tool designed to help generate and check for the availability of bitflipped domain names.')
+parser.add_argument('-s', help='list domains registered status', action="store_true")
 parser.add_argument('-a', help='list only domains that are currently available for purchase', action="store_true")
+parser.add_argument('-f', help='look for bitflipped (g)TLDs as well', action="store_true", dest="flip_it_all")
 parser.add_argument('-d', help='the domain name to generate bitflip variants of', dest="domain", required=True)
 args = parser.parse_known_args()[0]
 
 def domain_available(domain):
-    ret = os.system("whois "+domain+" | grep -i 'no match' &>/dev/null")
-    if ret == 0:
-        return True
-    else:
-        return False
+    whois = str(subprocess.check_output(["whois",domain]))
+    whois = whois.split("\n")
+    for ln in whois:
+        if "Admin Organization" in ln:
+            return False
+    return True
+
+def tobits(s):
+    result = []
+    for c in s:
+        bits = bin(ord(c))[2:]
+        bits = '00000000'[len(bits):] + bits
+        result.extend([int(b) for b in bits])
+    return result
+
+def frombits(bits):
+    chars = []
+    for b in range(int(len(bits) / 8)):
+        byte = bits[b*8:(b+1)*8]
+        chars.append(chr(int(''.join([str(bit) for bit in byte]), 2)))
+    return ''.join(chars)
+
+def bitflip_it(dom_in, tld_in, flip_tld):
+    # bitflipped variants cache
+    bit_flipped = []
+
+    # if we're doing TLD flipping as well, we'll
+    # generate the TLD sublist first to ease building
+    # of full domains next
+    tld_list = [tld_in]
+    if flip_tld:
+        all_tlds = open('tlds.txt','r').read().split("\n")
+        tld_bits = tobits(tld_in)
+        for tld_off in range(len(tld_bits)):
+            tld_tmp = tld_bits.copy()
+            bit = tld_tmp[tld_off]
+            if bit == 0:
+                bit = 1
+            else:
+                bit = 0
+            tld_tmp[tld_off] = bit
+            tld_tmp = frombits(tld_tmp).lower()
+            if is_valid(tld_tmp) and tld_tmp in all_tlds:
+                if tld_tmp not in tld_list:
+                    tld_list.append(tld_tmp)
+
+    dom_bits = tobits(dom_in)
+    for bit_off in range(len(dom_bits)):
+        dom_tmp = dom_bits.copy()
+        bit = dom_tmp[bit_off]
+        if bit == 0:
+            bit = 1
+        else:
+            bit = 0
+        dom_tmp[bit_off] = bit
+        dom_tmp = frombits(dom_tmp).lower()
+        if is_valid(dom_tmp):
+            for atld in tld_list:
+                bit_flipped.append(dom_tmp+"."+atld)
+
+    return bit_flipped
+
+def is_valid(domain):
+    valid_regex = re.compile("^[a-z0-9\-]{1,}$")
+    valid_chars = valid_regex.findall(domain.lower())
+    return (len(valid_chars) >= 1 and len(valid_chars[0]) == len(domain))
 
 def main():
     if len(sys.argv) <= 1:
@@ -52,67 +115,27 @@ def main():
         if "." in domain_in :
             domain_in, tld = domain_in.split(".")
         results = {}
-        bits = bitarray.bitarray()
-        bits.fromstring(domain_in)
-        bits_str = bits.to01()
-        domain_valid = re.compile("^[a-z0-9\-]{1,}$")
-        # chop into bytes
-        for char in range(0,len(domain_in)):
-            start_off = char*8
-            end_off = start_off+8
-            char_bin = bits_str[start_off:end_off]
-            char_ascii = bitarray.bitarray(char_bin)
-            char_ascii = char_ascii.tostring()
-            #print(char_bin, char_ascii)
-            #flip single bits within the byte
-            for bit_index in range(0,8):
-                flipped_list = list(char_bin)
-                flipped_list_orig = list(char_bin)
-                bit = flipped_list[bit_index]
-                if bit_index != 0:
-                    flipped_list[bit_index] = str(1) if int(bit) == 0 else str(0)
-                else:
-                    continue
-                flipped_list = ''.join(flipped_list)
-                flipped_list_orig = ''.join(flipped_list_orig)
-                flipped_ascii = bitarray.bitarray(flipped_list)
-                flipped_ascii = flipped_ascii.tostring()
-                #print (flipped_list_orig," => ",flipped_list," => ",flipped_ascii)
-                flipped_result = ''.join([bits_str[:start_off], flipped_list, bits_str[end_off:]])
-                flipped_result_ascii = bitarray.bitarray(flipped_result)
-                flipped_result_ascii = flipped_result_ascii.tostring()
-                flipped_result_ascii = flipped_result_ascii.lower()
-                is_valid = domain_valid.findall(flipped_result_ascii)
-                if len(is_valid) <= 0 or len(is_valid) > 1:
-                    #print(flipped_result_ascii + " is invalid")
-                    continue #invalid
-                elif flipped_result_ascii[0] == "-" or flipped_result_ascii[-1] == "-":
-                    #print(flipped_result_ascii + " is invalid")
-                    continue #invalid
-                else:
-                    #print(flipped_result_ascii, is_valid)
-                    #print (flipped_result, "=", flipped_result_ascii)
-                    results[flipped_result_ascii] = flipped_result_ascii
-        #print(bits.to01())
-        #print(results.items())
-        if args.a:
+
+        domains = list(set(bitflip_it(domain_in, tld, args.flip_it_all)))
+
+        if args.s or args.a:
             sys.stderr.write("+====================+\n")
             sys.stderr.write("| AVAILABLE DOMAINS: |\n")
             sys.stderr.write("+====================+\n")
-            for key, item in results.items():
+            sys.stderr.write("+ testing "+str(len(domains))+" combinations... this may take a while...\n")
+            for domain in domains:
                 #Check if a whois record exists for this domain
-                if domain_available(item+"."+tld):
-                    print("%s.%s" % (item, tld))
-                ##try: 
-                ##    domain = whois.whois("%s.%s" % (item, tld))
-                ##except:
-                ##    print("%s.%s" % (item, tld))
+                if domain_available(domain):
+                    print("%s is available" % (domain))
+                else: 
+                    if args.s:
+                        print("%s is registered" % (domain))
         else:
             sys.stderr.write("+=======================+\n")
             sys.stderr.write("| ALL POSSIBLE DOMAINS: |\n")
             sys.stderr.write("+=======================+\n")
-            for key, item in results.items():
-                print("%s.%s" % (item, tld))
+            for domain in domains:
+                print("%s" % (domain))
 
 if __name__ == '__main__':
     main()
