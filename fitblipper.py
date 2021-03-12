@@ -24,7 +24,6 @@
 ## OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ## SOFTWARE.
 
-
 import sys
 import re
 import os
@@ -39,12 +38,11 @@ parser.add_argument('-d', help='the domain name to generate bitflip variants of'
 args = parser.parse_known_args()[0]
 
 def domain_available(domain):
-    whois = str(subprocess.check_output(["whois",domain]))
-    whois = whois.split("\n")
-    for ln in whois:
-        if "Admin Organization" in ln:
-            return False
-    return True
+    ret = os.system("whois '"+domain+"' | egrep -i '(no match|object does not)' &>/dev/null")
+    if ret == 0:
+        return True
+    else:
+        return False
 
 def tobits(s):
     result = []
